@@ -1,0 +1,62 @@
+Url - https://cloudlabs.nuvepro.com/company/UNext/home
+
+Login to the lab account account using the credentials given to you and start the AWS account. Open the AWS console by clicking on Jump to Console button.
+
+In your AWS account, you have 2 IAM roles readily created by names: "Workspace-Deployment-Role" and "Workspace-Storage-Role".
+Also an S3 bucket with the name starting with your AWS account id is createdand available. This bucket serves as the primary storage location for the datasets.
+Copy the name of the S3 bucket and the ARNs of the roles and note them here.
+
+S3 bucket name: 640610635934-data-bricks-dataset-bucket-leqepxncqjwoilxazjgp
+Workspace-Deployment-Role ARN: arn:aws:iam::640610635934:role/Workspace-Deployment-Role
+Workspace-Storage-Role ARN: arn:aws:iam::640610635934:role/Workspace-Storage-Role
+
+Visit the URL below and complete your Databricks sign up process by providing your details and selecting AWS as the cloud provider under "Professional Use".
+https://accounts.cloud.databricks.com/login
+
+Copy your Accunt ID from the top right corner of the web page and make note of it here.
+
+Databricks Account ID: e01e66cf-9a16-491d-bbff-fb7cf0f6db12
+
+Ignore the pop-ups if any for workspace creation.
+=====
+
+Now go back to the AWS concole tab of your browser. We need to edit the trust relationships of the two roles.
+
+Go to AWS IAM console, select "Workspace-Deployment-Role". Open the Trust relationships section, click Edit Trust Policy button. In the policy JSON, replace the existing sts:ExternalId field with your Databricks ID as shown here.
+"sts:ExternalId": "e01e66cf-9a16-491d-bbff-fb7cf0f6db12"
+
+Next go back to Roles and select "Workspace-Storage-Role". Open the Trust relationships section, click Edit Trust Policy button. In the policy JSON, we have to make 2 updates.
+1. Replace the existing sts:ExternalId field with your Databricks ID as shown here.
+"sts:ExternalId": "e01e66cf-9a16-491d-bbff-fb7cf0f6db12"
+
+2. Update the Principal AWS section as below: 
+				"AWS": [
+				    "arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL",
+				    "arn:aws:iam::640610635934:role/Workspace-Deployment-Role"
+				    ]
+
+Go to AWS S3 service, select the Bucket. Choose the Permissions section go to Bucket policy/ Clicl Edit button. And update the value of the field "aws:PrincipalTag/DatabricksAccountId" with your Databricks account ID as shown below and save changes.
+"aws:PrincipalTag/DatabricksAccountId": "e01e66cf-9a16-491d-bbff-fb7cf0f6db12"
+
+This completes setting of the AWS service configurations.
+=====
+
+Now go to the browser tab of Databricks login and select/use manual process to create a Databricks workspace.
+
+Once you select Manual in Create Workspace tile, In General section -
+Give a name for your workspace, say your name or initials followed by -ws to indicate workspace.
+For AWS region - choose Ohio us-east-2.
+
+In Storage section -
+In the dropdown Storage configuration, select "Create storage configuration"
+Give a name for Storage configuration name, for example your initials followed by -stg-conf.
+In Bucket name field copy & paste the bucket name you noted above.
+IAM role ARN field copy & paste the Workspace-Storage-Role ARN you noted above.
+Click on Create storage and continue button.
+
+In Credentials section -
+For Credential configuration select "Add new credentials"
+For Credential configuration name give a name, for example your initials followed by -cred-conf.
+For Role ARN field copy & laste the Workspace-Deployment-Role ARN
+
+Now click on Create Workspace.
