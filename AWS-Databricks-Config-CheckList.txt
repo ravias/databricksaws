@@ -1,0 +1,39 @@
+In AWS login on S3 & IAM management page:
+1.
+S3 Bucket - In Permissions --> Bucket Policy --> "aws:PrincipalTag/DatabricksAccountId" should have <<Your Databricks Account ID>>
+
+2.
+Workspace-Deployment-Role - Trust Relationships --> Trust Policy --> "sts:ExternalId": should have <<Your Databricks Account ID>>
+
+3.
+Workspace-Storage-Role - Trust Relationships --> Trust Policy --> "sts:ExternalId": should have <<Your Databricks Account ID>>
+
+4.
+Workspace-Storage-Role - Trust Relationships --> Trust Policy --> Principal AWS section should have the following instead of a single line with "AWS".
+				"AWS": [
+				    "arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL",
+				    "<<Your Deployment Role ARN>>"
+				    ]
+==========
+
+In Databricks login, to create Workspace:
+
+1.
+In General section -
+Give a name for your workspace, say your name or initials followed by -ws to indicate workspace.
+For AWS region - choose Ohio us-east-2.
+
+2.
+In Storage section -
+In the dropdown Storage configuration, select "Create storage configuration" and Give a name for Storage configuration name, like ws1-stg-conf.
+In Bucket name give your S3 bucket name.
+In IAM role ARN field give your Workspace-Storage-Role ARN.
+Click on Create storage and continue button.
+
+3.
+In Credentials section -
+For Credential configuration select "Add new credentials"
+For Credential configuration name give a name, like ws1-cred-conf.
+For Role ARN field give your Workspace-Deployment-Role ARN
+
+And click on Create Workspace.
